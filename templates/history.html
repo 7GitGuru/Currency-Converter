@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversion History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles-dark.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/styles-white.css') }}"> or white theme -->
+</head>
+<body>
+    <div class="container">
+        <h1>Conversion History</h1>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>From Currency</th>
+                    <th>To Currency</th>
+                    <th>Amount</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in history %}
+                    <tr>
+                        <td>{{ record[0] }}</td>
+                        <td>{{ record[1] }}</td>
+                        <td>{{ record[2] }}</td>
+                        <td>{{ record[3] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Button to clear history -->
+        <a href="/clear_history" class="clear-history-btn">Clear History</a>
+
+        <!-- Button to return to main screen -->
+        <a href="/" class="back-btn">Back to Main</a>
+
+        <!-- Контейнер для уведомления -->
+        <div class="notification-container"></div>
+    </div>
+
+    <script>
+        const clearHistoryBtn = document.querySelector('.clear-history-btn');
+        clearHistoryBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            fetch('/clear_history', {
+                method: 'GET'
+            })
+            .then(response => response.text())
+            .then(data => {
+                const notification = document.createElement('div');
+                notification.classList.add('notification');
+                notification.textContent = data;
+                document.querySelector('.notification-container').appendChild(notification);
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        notification.remove();
+                        location.reload();
+                    }, 500);
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+
+    </div>
+</body>
+</html>

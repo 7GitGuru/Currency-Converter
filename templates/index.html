@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Currency Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles-dark.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/styles-white.css') }}"> For white theme -->
+</head>
+<body>
+    <div class="container">
+        <h1>Currency Converter</h1>
+        <form action="/convert" method="post">
+            <label for="from_currency">From:</label>
+            <select name="from_currency" id="from_currency">
+                {% for currency in currencies %}
+                    <option value="{{ currency }}">{{ currency }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <label for="to_currency">To:</label>
+            <select name="to_currency" id="to_currency">
+                {% for currency in currencies %}
+                    <option value="{{ currency }}">{{ currency }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <label for="amount">Amount:</label>
+            <!-- Adding a check for entering only numbers -->
+            <input type="text" name="amount" id="amount" pattern="[0-9]+([\.][0-9]+)?" title="Please enter a valid value. Example: 123 or 123.6">
+            <input type="submit" value="Convert">
+        </form>
+        <div id="result" class="result" style="display: none;"></div>
+
+        <a href="/history" class="history-btn" style="float: right;">View History</a>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/convert', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('result').innerText = data;
+                document.getElementById('result').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
